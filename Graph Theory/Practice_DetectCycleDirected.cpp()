@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int V;
+vector<int> *adj;
+
+void addEdge(int u, int v){
+    adj[u].push_back(v);
+}
+
+bool isCycleUtil(int u, bool *visited, bool *recStack){
+    
+    stack<int> st;
+    st.push(u);
+    
+    while (!st.empty()){
+        u = st.top();
+
+        visited[u] = true;
+        recStack[u] = true;
+        bool isChild = false;
+        
+        for (auto v = adj[u].begin(); v!= adj[u].end(); v++){
+            if (!visited[*v]){
+                isChild = true;
+                st.push(*v);
+            }
+            if (recStack[*v]){
+                return true;
+            }
+        }
+        if (!isChild){
+            recStack[u] = false;
+            st.pop();
+        }
+    }
+    return false;
+}
+
+bool isCycle(){
+    
+    bool *visited = new bool[V];
+    bool *recStack = new bool[V];
+    memset (visited, false, V);
+    memset (recStack, false, V);
+    
+    for (int i=0;i<V;i++){
+        if (!visited[i]){
+            if(isCycleUtil(i,visited,recStack)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main(){
+    
+    V = 8;
+    adj = new vector<int>[V];
+    addEdge(1,2);
+    addEdge(2, 3);
+    addEdge(3, 4);
+    addEdge(4, 5);
+
+    cout << isCycle() << endl;
+}
